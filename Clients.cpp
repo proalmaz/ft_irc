@@ -8,7 +8,7 @@ Clients::Clients()
 
 Clients::Clients(const Clients &copy) { *this = copy; }
 
-Clients			Clients::operator=(const Clients &copy)
+Clients			&Clients::operator=(const Clients &copy)
 {
 	if (this == &copy)
 		return *this;

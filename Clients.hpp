@@ -17,10 +17,12 @@ private:
 public:
 	Clients();
 	Clients(Clients const &copy);
-	Clients &operator=(Clients const &copy);
 	~Clients();
+
+	Clients			&operator=(Clients const &copy);
+
 	int 			getFd();
 	sockaddr_in 	*getAddr();
 	socklen_t 		*getLen();
-	void 			setFd(int fd)
+	void 			setFd(int fd);
 };
