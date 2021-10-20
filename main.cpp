@@ -1,55 +1,27 @@
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <vector>
-#include <unistd.h>
-#include <fcntl.h>
-#include <strings.h>
-
-class m_clients
-{
-private:
-	int m_fd;
-	sockaddr_in m_addr;
-	socklen_t m_len;
-
-public:
-	m_clients() { bzero(&m_addr, sizeof(m_addr));
-		m_len = sizeof (m_addr); }
-	m_clients(m_clients const &copy) { *this = copy; }
-	m_clients &operator=(m_clients const &copy)
-	{
-		if (this == &copy)
-			return *this;
-		m_addr = copy.m_addr;
-		m_len = copy.m_len;
-		m_fd = copy.m_fd;
-		return *this;
-	}
-	~m_clients() {}
-	int 			getFd() { return m_fd; }
-	sockaddr_in 	*getAddr() { return &m_addr; }
-	socklen_t 		*getLen() {return &m_len; }
-	void 			setFd(int fd) {m_fd = fd;}
-};
+#include "Clients.hpp"
 
 int main()
 {
 	int fds;
-	struct sockaddr_in addr; // структура для хранения семьи, порта и адреса
-	fds = socket(AF_INET, SOCK_STREAM, 0); // создание фд сокета
+	// структура для хранения семьи, порта и адреса
+	struct sockaddr_in addr;
+	// создание фд сокета
+	fds = socket(AF_INET, SOCK_STREAM, 0);
 	if (fds == -1)
 		return (1);
-	addr.sin_family = AF_INET;  // мы говорим, что будем использовать ТСP
-	// протокол
-	addr.sin_port = htons(8080); // порт любой, кроме (1 - 1023)
-	addr.sin_addr.s_addr = htonl(INADDR_ANY); // 127.0.0.1
+	// мы говорим, что будем использовать ТСP протокол
+	addr.sin_family = AF_INET;
+	// порт любой, кроме (1 - 1023)
+	addr.sin_port = htons(8080);
+	// 127.0.0.1
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	// связываем фд сокета со структурой адреса
 	if (bind(fds, (const struct sockaddr *)&addr, sizeof(addr)) == -1) //
-		// связываем фд сокета со структурой адреса
 		return (1);
-	if (listen(fds, 128) != 0) // переводим сокет в режим прослушки
+	// переводим сокет в режим прослушки
+	if (listen(fds, 128) != 0)
 		return (1);
-	std::vector<m_clients> clients;
+	std::vector<Clients> clients;
 	while (1)
 	{
 		fd_set rfd, allfd;
@@ -74,7 +46,7 @@ int main()
 		if (FD_ISSET(fds, &rfd))
 		{
 			// создаем нового клиента
-			m_clients client;
+			Clients client;
 			// принимаем новый фд, попутно заполняя его объект адрессом
 			int fdnew = accept(fds, (sockaddr *)(client.getAddr()),
 							   client.getLen());
