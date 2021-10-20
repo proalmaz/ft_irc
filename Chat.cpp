@@ -136,6 +136,8 @@ void Chat::putNickname(Clients &src)
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
 		src.setMessage("");
+		string prompt = src.getNickname() + ": ";
+		send(src.getFd(), prompt.c_str(), prompt.length(), 0);
 	}
 }
 
@@ -151,6 +153,11 @@ void Chat::sendMessage(Clients &src)
 			send(m_clients[i].getFd(), nick.c_str(), nick.length(), 0);
 			send(m_clients[i].getFd(), input.c_str(), input.length(), 0);
 			src.setMessage("");
+		}
+		if (m_clients[i].getFd() == src.getFd())
+		{
+			string prompt = src.getNickname() + ": ";
+			send(src.getFd(), prompt.c_str(), prompt.length(), 0);
 		}
 	}
 }
