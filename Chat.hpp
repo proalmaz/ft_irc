@@ -23,7 +23,9 @@ public:
 	void 	putFdSpace();
 	void 	newClientHandler();
 	void 	checkClientsFd();
-	void 	checkPassword(string input, Clients &src);
-	void 	putNickname(string input, Clients &src);
-	int 	getMesage(Clients &src);
+	void 	checkPassword(Clients &src);
+	void 	putNickname(Clients &src);
+	void 	sendMessage(Clients &src);
+	int 	getMessage(Clients &src);
+
 };

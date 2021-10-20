@@ -2,6 +2,7 @@
 
 Clients::Clients()
 {
+	m_message = "";
 	bzero(&m_addr, sizeof(m_addr));
 	m_len = sizeof (m_addr);
 }
@@ -12,6 +13,9 @@ Clients			&Clients::operator=(const Clients &copy)
 {
 	if (this == &copy)
 		return *this;
+	m_nickname = copy.m_nickname;
+	m_message = copy.m_message;
+	m_status = copy.m_status;
 	m_addr = copy.m_addr;
 	m_len = copy.m_len;
 	m_fd = copy.m_fd;
@@ -46,4 +50,16 @@ std::string Clients::getNickname() { return m_nickname; }
 void 		Clients::setNickname(string &nickname)
 {
 	m_nickname = nickname;
+}
+
+std::string Clients::getMessage() { return m_message; }
+
+void 	Clients::setMessage(string src)
+{
+	m_message = src;
+}
+
+void 	Clients::appendMessage(string src)
+{
+	m_message += src;
 }

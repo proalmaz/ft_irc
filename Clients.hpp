@@ -27,6 +27,7 @@ class Clients
 {
 private:
 	string		m_nickname;
+	string		m_message;
 	STATUSFLAG	m_status;
 	int			m_fd;
 	sockaddr_in	m_addr;
@@ -44,6 +45,9 @@ public:
 	socklen_t 		*getLen();
 	STATUSFLAG		getStatus();
 	std::string		getNickname();
+	std::string 	getMessage();
+	void 			setMessage(string src);
+	void 			appendMessage(string src);
 	void 			setNickname(string &nickname);
 	void 			setStatus(STATUSFLAG statusflag);
 	void 			setFd(int fd);

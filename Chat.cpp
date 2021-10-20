@@ -11,6 +11,8 @@ Chat	&Chat::operator=(const Chat &copy)
 {
 	if (this == &copy)
 		return *this;
+	m_rfd = copy.m_rfd;
+	m_max_fd = copy.m_max_fd;
 	m_fds = copy.m_fds;
 	m_clients = copy.m_clients;
 	m_password = copy.m_password;
@@ -86,7 +88,7 @@ void Chat::checkClientsFd()
 	{
 		if (FD_ISSET(m_clients[i].getFd(), &m_rfd))
 		{
-			if (getMesage(m_clients[i]) == CLIENT_OFF)
+			if (getMessage(m_clients[i]) == CLIENT_OFF)
 			{
 				close(m_clients[i].getFd());
 				m_clients.erase(m_clients.begin() + i);
@@ -95,30 +97,37 @@ void Chat::checkClientsFd()
 	}
 }
 
-void Chat::checkPassword(string input, Clients &src)
+void Chat::checkPassword(Clients &src)
 {
+	std::string input = src.getMessage();
+	input = ft_strtrim(input, "\n");
 	if (input == m_password)
 	{
 		std::string output = "Authorization success!\n"
 							 "Please enter you nickname: ";
 		send(src.getFd(), output.c_str(), output.length(), 0);
 		src.setStatus(AUTHORIZED_PASSWORD);
+		src.setMessage("");
 	}
 	else
 	{
 		std::string output = "Authorization failed!\n"
 							 "Please enter correct password: ";
 		send(src.getFd(), output.c_str(), output.length(), 0);
+		src.setMessage("");
 	}
 }
 
-void Chat::putNickname(string input, Clients &src)
+void Chat::putNickname(Clients &src)
 {
+	std::string input = src.getMessage();
+	input = ft_strtrim(input, "\n");
 	if (input.empty())
 	{
 		std::string output = "I can't identify you if you put empty nickname."
 							 " Try again!\nPlease enter you nickname: ";
 		send(src.getFd(), output.c_str(), output.length(), 0);
+		src.setMessage("");
 	}
 	else
 	{
@@ -126,24 +135,45 @@ void Chat::putNickname(string input, Clients &src)
 		send(src.getFd(), output.c_str(), output.length(), 0);
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
+		src.setMessage("");
 	}
 }
 
-int Chat::getMesage(Clients &src)
+void Chat::sendMessage(Clients &src)
+{
+	std::string input = src.getMessage();
+	for (int i = 0; i < m_clients.size(); ++i)
+	{
+		if (m_clients[i].getFd() != src.getFd()
+		&& m_clients[i].getStatus()	== AUTHORIZED_NICK)
+		{
+			string nick = src.getNickname() + ": ";
+			send(m_clients[i].getFd(), nick.c_str(), nick.length(), 0);
+			send(m_clients[i].getFd(), input.c_str(), input.length(), 0);
+			src.setMessage("");
+		}
+	}
+}
+
+int Chat::getMessage(Clients &src)
 {
 	char buff[10000];
 	int res = recv(src.getFd(), buff, 10000, 0);
 	if (res <= 0)
 		return CLIENT_OFF;
 	buff[res] = '\0';
-	string str(buff);
-	str = ft_strtrim(str, "\n");
+	if (src.getMessage().empty())
+		src.setMessage(buff);
+	else
+		src.appendMessage(buff);
+	if (src.getMessage().back() != '\n')
+		return CLIENT_ALL_RIGHT;
 	if (src.getStatus() == NEW_CLIENT)
-		checkPassword(str, src);
+		checkPassword(src);
 	else if (src.getStatus() == AUTHORIZED_PASSWORD)
-		putNickname(str, src);
-	else if (src.getStatus() == AUTHORIZED_NICK)
-		cout << src.getNickname() << ": " << str;
+		putNickname(src);
+	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() != "\n")
+		sendMessage(src);
 	return CLIENT_ALL_RIGHT;
 }
 
