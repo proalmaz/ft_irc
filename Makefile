@@ -2,6 +2,9 @@ NAME	=	IRC
 
 SRC		=	main.cpp \
 			Clients.cpp \
+			Chat.cpp \
+			Chanel.cpp \
+			utils.cpp \
 
 CC		=	clang++
 
