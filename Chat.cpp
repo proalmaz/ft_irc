@@ -16,6 +16,7 @@ Chat	&Chat::operator=(const Chat &copy)
 	m_fds = copy.m_fds;
 	m_clients = copy.m_clients;
 	m_password = copy.m_password;
+	m_channels = copy.m_channels;
 	return *this;
 }
 
@@ -162,6 +163,11 @@ void Chat::sendMessage(Clients &src)
 	}
 }
 
+void Chat::createChannel(Clients &src)
+{
+
+}
+
 int Chat::getMessage(Clients &src)
 {
 	char buff[10000];
@@ -181,6 +187,9 @@ int Chat::getMessage(Clients &src)
 		putNickname(src);
 	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() != "\n")
 		sendMessage(src);
+//	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() ==
+//	"create channel")
+//		createChannel(src);
 	return CLIENT_ALL_RIGHT;
 }
 

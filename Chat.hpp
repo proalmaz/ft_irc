@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Clients.hpp"
+#include "Channel.hpp"
 
 class Chat
 {
 private:
 	int						m_fds;
 	std::vector<Clients>	m_clients;
+	std::vector<Channel>	m_channels;
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
@@ -26,6 +28,6 @@ public:
 	void 	checkPassword(Clients &src);
 	void 	putNickname(Clients &src);
 	void 	sendMessage(Clients &src);
+	void 	createChannel(Clients &src);
 	int 	getMessage(Clients &src);
-
 };
