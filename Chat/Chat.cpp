@@ -3,7 +3,7 @@
 Chat::Chat() : m_fds(-1), m_password("123")
 {}
 
-Chat::Chat(const Chat &copy) {*this = copy;}
+Chat::Chat(const Chat &copy) { *this = copy; }
 
 Chat::~Chat() {}
 
@@ -115,8 +115,7 @@ void Chat::checkPassword(Clients &src)
 
 void Chat::putNickname(Clients &src)
 {
-	std::string input = src.getMessage();
-	input = ft_strtrim(input, "\n");
+	std::string input = ft_strtrim(src.getMessage(), "\n");
 	if (input.empty())
 		sendMessageToClient(src, "I can't identify you if you put empty nickname."
 								 " Try again!\nPlease enter you nickname: ");
@@ -154,18 +153,17 @@ int Chat::getMessage(Clients &src)
 	if (res <= 0)
 		return CLIENT_OFF;
 	buff[res] = '\0';
-	if (src.getMessage().empty())
-		src.setMessage(buff);
-	else
-		src.appendMessage(buff);
+	src.appendMessage(buff);
 	if (src.getMessage().back() != '\n')
 		return CLIENT_ALL_RIGHT;
 	if (src.getStatus() == NEW_CLIENT)
 		checkPassword(src);
 	else if (src.getStatus() == AUTHORIZED_PASSWORD)
 		putNickname(src);
-	else if (src.getStatus() == AUTHORIZED_NICK && checkEmptyMessage(src))
+	else if (src.getStatus() == AUTHORIZED_NICK
+			&& src.getMessage().front() != '\n')
 		sendMessage(src);
+	src.setMessage("");
 //	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() ==
 //	"create channel")
 //		createChannel(src);
