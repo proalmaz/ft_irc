@@ -1,10 +1,10 @@
 NAME	=	IRC
 
 SRC		=	main.cpp \
-			Clients.cpp \
-			Chat.cpp \
-			Channel.cpp \
-			utils.cpp \
+			Clients/Clients.cpp \
+			Chat/Chat.cpp \
+			Channel/Channel.cpp \
+			Utils/utils.cpp \
 
 CC		=	clang++
 
