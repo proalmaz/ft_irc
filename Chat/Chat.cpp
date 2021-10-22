@@ -10,6 +10,7 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[5].s_commandName = "LEAVE";
 	m_commands[6].s_commandName = "NICK";
 	m_commands[0].f = &Chat::printHelp;
+	m_commands[4].f = &Chat::quitClient;
 }
 
 Chat::Chat(const Chat &copy) { *this = copy; }
@@ -167,6 +168,18 @@ void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 						 "QUIT	- leave a chat.\n"
 						 "LEAVE	- leave a channel.\n";
 	sendMessageToClient(src, output);
+}
+
+void Chat::quitClient(Clients &src, vector<string> &cmd)
+{
+	for (int i = 0; i < m_clients.size(); ++i)
+	{
+		if (m_clients[i].getFd() == src.getFd())
+		{
+			close(src.getFd());
+			m_clients.erase(m_clients.begin() + i);
+		}
+	}
 }
 
 bool Chat::checkCommand(Clients &src)
