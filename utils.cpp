@@ -34,3 +34,9 @@ int checkNicknameAlreadyUsed(std::vector<Clients> &clients, Clients &src)
 	}
 	return 0;
 }
+
+void	sendMessageToClient(Clients &src, string output)
+{
+	send(src.getFd(), output.c_str(), output.length(), 0);
+	src.setMessage("");
+}

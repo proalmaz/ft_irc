@@ -34,3 +34,4 @@ public:
 
 int			checkNicknameAlreadyUsed(std::vector<Clients> &clients, Clients &src);
 int			checkEmptyMessage(Clients &src);
+void		sendMessageToClient(Clients &src, string output);

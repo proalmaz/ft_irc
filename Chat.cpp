@@ -100,23 +100,17 @@ void Chat::checkClientsFd()
 
 void Chat::checkPassword(Clients &src)
 {
-	std::string input = src.getMessage();
-	input = ft_strtrim(input, "\n");
+	std::string input = ft_strtrim(src.getMessage(), "\n");
 	if (input == m_password)
 	{
-		std::string output = "Authorization success!\n"
-							 "Please enter you nickname: ";
-		send(src.getFd(), output.c_str(), output.length(), 0);
+
+		sendMessageToClient(src, "Authorization success!\n"
+								 "Please enter you nickname: ");
 		src.setStatus(AUTHORIZED_PASSWORD);
-		src.setMessage("");
 	}
 	else
-	{
-		std::string output = "Authorization failed!\n"
-							 "Please enter correct password: ";
-		send(src.getFd(), output.c_str(), output.length(), 0);
-		src.setMessage("");
-	}
+		sendMessageToClient(src, "Authorization failed!\n"
+								 "Please enter correct password: ");
 }
 
 void Chat::putNickname(Clients &src)
@@ -124,26 +118,16 @@ void Chat::putNickname(Clients &src)
 	std::string input = src.getMessage();
 	input = ft_strtrim(input, "\n");
 	if (input.empty())
-	{
-		std::string output = "I can't identify you if you put empty nickname."
-							 " Try again!\nPlease enter you nickname: ";
-		send(src.getFd(), output.c_str(), output.length(), 0);
-		src.setMessage("");
-	}
+		sendMessageToClient(src, "I can't identify you if you put empty nickname."
+								 " Try again!\nPlease enter you nickname: ");
 	else if (checkNicknameAlreadyUsed(m_clients, src))
-	{
-		std::string output = "This nickname already exist. Please choose "
-							 "another variant.\nPlease enter you nickname: ";
-		send(src.getFd(), output.c_str(), output.length(), 0);
-		src.setMessage("");
-	}
+		sendMessageToClient(src, "Such a nickname already exists. "
+								 "Please choose another option.\nPlease enter you nickname: ");
 	else
 	{
-		std::string output = "Welcome in our chat " + input + "!\n";
-		send(src.getFd(), output.c_str(), output.length(), 0);
+		sendMessageToClient(src, "Welcome in our chat " + input + "!\n");
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
-		src.setMessage("");
 	}
 }
 
@@ -154,12 +138,7 @@ void Chat::sendMessage(Clients &src)
 	{
 		if (m_clients[i].getFd() != src.getFd()
 		&& m_clients[i].getStatus()	== AUTHORIZED_NICK)
-		{
-			string nick = src.getNickname() + ": ";
-			send(m_clients[i].getFd(), nick.c_str(), nick.length(), 0);
-			send(m_clients[i].getFd(), input.c_str(), input.length(), 0);
-			src.setMessage("");
-		}
+			sendMessageToClient(m_clients[i], src.getNickname() + ": " + input);
 	}
 }
 
