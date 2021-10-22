@@ -15,6 +15,7 @@ using std::cin;
 using std::string;
 using std::cout;
 using std::endl;
+using std::vector;
 
 enum STATUSFLAG
 {
@@ -54,5 +55,4 @@ public:
 	void 			authorization();
 };
 
-int					getMesage(Clients &src);
 std::string			ft_strtrim(const std::string &str, const std::string &set);

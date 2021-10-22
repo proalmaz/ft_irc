@@ -6,12 +6,18 @@
 class Chat
 {
 private:
+	struct 					s_command
+	{
+		std::string			s_commandName;
+		void 				(Chat::*f)(Clients &src, std::vector<string> &cmd);
+	};
 	int						m_fds;
 	std::vector<Clients>	m_clients;
 //	std::vector<Channel>	m_channels;
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
+	s_command				m_commands[7];
 
 public:
 	Chat();
@@ -29,9 +35,12 @@ public:
 	void 	putNickname(Clients &src);
 	void 	sendMessage(Clients &src);
 	void 	createChannel(Clients &src);
+	void 	printHelp(Clients &src, std::vector<string> &cmd);
 	int 	getMessage(Clients &src);
+	bool 	checkCommand(Clients &src);
 };
 
 int			checkNicknameAlreadyUsed(std::vector<Clients> &clients, Clients &src);
 int			checkEmptyMessage(Clients &src);
 void		sendMessageToClient(Clients &src, string output);
+std::vector<std::string>	ft_split(std::string str, const std::string &del);

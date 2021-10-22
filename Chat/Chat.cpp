@@ -1,7 +1,16 @@
 #include "Chat.hpp"
 
 Chat::Chat() : m_fds(-1), m_password("123")
-{}
+{
+	m_commands[0].s_commandName = "HELP";
+	m_commands[1].s_commandName = "KICK";
+	m_commands[2].s_commandName = "JOIN";
+	m_commands[3].s_commandName = "PRIVMSG";
+	m_commands[4].s_commandName = "QUIT";
+	m_commands[5].s_commandName = "LEAVE";
+	m_commands[6].s_commandName = "NICK";
+	m_commands[0].f = &Chat::printHelp;
+}
 
 Chat::Chat(const Chat &copy) { *this = copy; }
 
@@ -118,13 +127,15 @@ void Chat::putNickname(Clients &src)
 	std::string input = ft_strtrim(src.getMessage(), "\n");
 	if (input.empty())
 		sendMessageToClient(src, "I can't identify you if you put empty nickname."
-								 " Try again!\nPlease enter you nickname: ");
+								 " Try again!\nPlease enter your nickname: ");
 	else if (checkNicknameAlreadyUsed(m_clients, src))
 		sendMessageToClient(src, "Such a nickname already exists. "
-								 "Please choose another option.\nPlease enter you nickname: ");
+								 "Please choose another option.\nPlease enter"
+								 " your nickname: ");
 	else
 	{
-		sendMessageToClient(src, "Welcome in our chat " + input + "!\n");
+		sendMessageToClient(src, "Welcome to our chat " + input + "!\n"
+		"Enter HELP for show a list of available commands\n");
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
 	}
@@ -146,6 +157,33 @@ void Chat::createChannel(Clients &src)
 
 }
 
+void Chat::printHelp(Clients &src, std::vector<string> &cmd)
+{
+	std::string output = "HELP 	- show a list of available commands.\n"
+						 "KICK 	- kick the client off the channel.\n"
+						 "JOIN 	- create or enter an existing channel.\n"
+						 "NICK 	- change nickname.\n"
+						 "PRIVMSG	- send private message somebody.\n"
+						 "QUIT	- leave a chat.\n"
+						 "LEAVE	- leave a channel.\n";
+	sendMessageToClient(src, output);
+}
+
+bool Chat::checkCommand(Clients &src)
+{
+	string input = src.getMessage();
+	vector<string> cmd = ft_split(input, " ");
+	for (int i = 0; i < 7; ++i)
+	{
+		if (ft_strtrim(cmd[0], "\n") == m_commands[i].s_commandName)
+		{
+			(this->*m_commands[i].f)(src, cmd);
+			return true;
+		}
+	}
+	return false;
+}
+
 int Chat::getMessage(Clients &src)
 {
 	char buff[10000];
@@ -160,6 +198,8 @@ int Chat::getMessage(Clients &src)
 		checkPassword(src);
 	else if (src.getStatus() == AUTHORIZED_PASSWORD)
 		putNickname(src);
+	else if (checkCommand(src))
+		return CLIENT_ALL_RIGHT;
 	else if (src.getStatus() == AUTHORIZED_NICK
 			&& src.getMessage().front() != '\n')
 		sendMessage(src);
