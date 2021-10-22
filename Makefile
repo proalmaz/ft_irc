@@ -3,7 +3,7 @@ NAME	=	IRC
 SRC		=	main.cpp \
 			Clients.cpp \
 			Chat.cpp \
-			Chanel.cpp \
+			Channel.cpp \
 			utils.cpp \
 
 CC		=	clang++

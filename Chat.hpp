@@ -8,7 +8,7 @@ class Chat
 private:
 	int						m_fds;
 	std::vector<Clients>	m_clients;
-	std::vector<Channel>	m_channels;
+//	std::vector<Channel>	m_channels;
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
@@ -31,3 +31,6 @@ public:
 	void 	createChannel(Clients &src);
 	int 	getMessage(Clients &src);
 };
+
+int			checkNicknameAlreadyUsed(std::vector<Clients> &clients, Clients &src);
+int			checkEmptyMessage(Clients &src);

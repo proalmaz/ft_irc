@@ -2,7 +2,7 @@
 
 Channel::Channel() {}
 
-Channel::Channel(string name, Clients *admin) : m_name(name), m_admin(admin)
+Channel::Channel(string name, Clients &admin) : m_name(name), m_admin(&admin)
 {
 	m_users.push_back(admin);
 }
@@ -12,14 +12,14 @@ Channel::~Channel()
 	for (int i = 0; i < m_users.size(); ++i)
 	{
 		string output = "Channel " + m_name + " was destroy.";
-		send(m_users[i]->getFd(), output.c_str(), output.length(), 0);
+		send(m_users[i].getFd(), output.c_str(), output.length(), 0);
 	}
 	m_users.clear();
 }
 
-Channel::Channel(Channel &copy) { *this = copy; }
+Channel::Channel(Channel const &copy) { *this = copy; }
 
-Channel		&Channel::operator=(Channel &copy)
+Channel		&Channel::operator=(Channel const &copy)
 {
 	if (this == &copy)
 		return *this;

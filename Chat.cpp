@@ -16,7 +16,7 @@ Chat	&Chat::operator=(const Chat &copy)
 	m_fds = copy.m_fds;
 	m_clients = copy.m_clients;
 	m_password = copy.m_password;
-	m_channels = copy.m_channels;
+//	m_channels = copy.m_channels;
 	return *this;
 }
 
@@ -130,6 +130,13 @@ void Chat::putNickname(Clients &src)
 		send(src.getFd(), output.c_str(), output.length(), 0);
 		src.setMessage("");
 	}
+	else if (checkNicknameAlreadyUsed(m_clients, src))
+	{
+		std::string output = "This nickname already exist. Please choose "
+							 "another variant.\nPlease enter you nickname: ";
+		send(src.getFd(), output.c_str(), output.length(), 0);
+		src.setMessage("");
+	}
 	else
 	{
 		std::string output = "Welcome in our chat " + input + "!\n";
@@ -137,8 +144,6 @@ void Chat::putNickname(Clients &src)
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
 		src.setMessage("");
-		string prompt = src.getNickname() + ": ";
-		send(src.getFd(), prompt.c_str(), prompt.length(), 0);
 	}
 }
 
@@ -154,11 +159,6 @@ void Chat::sendMessage(Clients &src)
 			send(m_clients[i].getFd(), nick.c_str(), nick.length(), 0);
 			send(m_clients[i].getFd(), input.c_str(), input.length(), 0);
 			src.setMessage("");
-		}
-		if (m_clients[i].getFd() == src.getFd())
-		{
-			string prompt = src.getNickname() + ": ";
-			send(src.getFd(), prompt.c_str(), prompt.length(), 0);
 		}
 	}
 }
@@ -185,7 +185,7 @@ int Chat::getMessage(Clients &src)
 		checkPassword(src);
 	else if (src.getStatus() == AUTHORIZED_PASSWORD)
 		putNickname(src);
-	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() != "\n")
+	else if (src.getStatus() == AUTHORIZED_NICK && checkEmptyMessage(src))
 		sendMessage(src);
 //	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() ==
 //	"create channel")

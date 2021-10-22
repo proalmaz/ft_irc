@@ -6,16 +6,16 @@ class Channel
 {
 private:
 	string					m_name;
-	std::vector<Clients *>	m_users;
+	std::vector<Clients>	m_users;
 	Clients					*m_admin;
 
-	Channel();
 public:
-	Channel(string name, Clients *admin);
-	Channel(Channel &copy);
+	Channel();
+	Channel(string name, Clients &admin);
+	Channel(Channel const &copy);
 	~Channel();
 
-	Channel					&operator=(Channel &copy);
+	Channel					&operator=(Channel const &copy);
 
 	std::string 			getName();
 	Clients					*getAdmin();
