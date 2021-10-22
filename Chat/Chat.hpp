@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Clients.hpp"
-#include "Channel.hpp"
+#include "../Clients/Clients.hpp"
+#include "../Channel/Channel.hpp"
 
 class Chat
 {

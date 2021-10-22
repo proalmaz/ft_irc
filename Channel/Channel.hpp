@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Chat.hpp"
+#include "../Chat/Chat.hpp"
 
 class Channel
 {

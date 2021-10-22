@@ -1,5 +1,5 @@
-#include "Clients.hpp"
-#include "Chat.hpp"
+#include "Clients/Clients.hpp"
+#include "Chat/Chat.hpp"
 
 int main(int argc, char **argv)
 {
