@@ -23,16 +23,15 @@ int	checkEmptyMessage(Clients &src)
 	return 0;
 }
 
-int checkNicknameAlreadyUsed(std::vector<Clients> &clients, Clients &src)
+bool checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input)
 {
-	std::string input = src.getMessage();
 	input = ft_strtrim(input, "\n");
 	for (int i = 0; i < clients.size(); ++i)
 	{
 		if (clients[i].getNickname() == input)
-			return 1;
+			return true;
 	}
-	return 0;
+	return false;
 }
 
 void	sendMessageToClient(Clients &src, string output)
@@ -45,13 +44,17 @@ std::vector<std::string>	ft_split(std::string str, const std::string &del)
 	std::vector<std::string>	splitStr;
 	size_t						pos;
 
-	if (!str.empty()) {
-		if (del.empty()) {
+	if (!str.empty())
+	{
+		if (del.empty())
 			splitStr.push_back(str);
-		} else {
+		else
+		{
 			str = ft_strtrim(str, del);
-			if (!str.empty()) {
-				for ( pos = str.find(del) ; pos != std::string::npos ; pos = str.find(del) ) {
+			if (!str.empty())
+			{
+				for ( pos = str.find(del) ; pos != std::string::npos ; pos = str.find(del) )
+				{
 					if (str.substr(0, pos) != "")
 						splitStr.push_back(str.substr(0, pos));
 					str = str.substr(pos + del.length(), str.length() - pos);

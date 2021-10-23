@@ -39,15 +39,15 @@ void 			Clients::setStatus(STATUSFLAG statusflag)
 
 STATUSFLAG		Clients::getStatus() {return m_status;}
 
-void Clients::authorization()
-{
-	string str = "Enter password: ";
-	send(m_fd, str.c_str(), str.length(), 0);
-}
+//void Clients::authorization()
+//{
+//	string str = "Enter password: ";
+//	send(m_fd, str.c_str(), str.length(), 0);
+//}
 
 std::string Clients::getNickname() { return m_nickname; }
 
-void 		Clients::setNickname(string &nickname)
+void 		Clients::setNickname(const string &nickname)
 {
 	m_nickname = nickname;
 }
