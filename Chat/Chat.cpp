@@ -217,17 +217,6 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
             m_clients.erase(m_clients.begin() + i);
         }
     }
-=======
-void Chat::quitClient(Clients &src, vector<string> &cmd)
-{
-	for (int i = 0; i < m_clients.size(); ++i)
-	{
-		if (m_clients[i].getFd() == src.getFd())
-		{
-			close(src.getFd());
-			m_clients.erase(m_clients.begin() + i);
-		}
-	}
 }
 
 bool Chat::checkCommand(Clients &src)
