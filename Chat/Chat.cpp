@@ -10,6 +10,8 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[5].s_commandName = "LEAVE";
 	m_commands[6].s_commandName = "NICK";
 	m_commands[0].f = &Chat::printHelp;
+	m_commands[4].f = &Chat::quitClient;
+	m_commands[6].f = &Chat::changeNickname;
 }
 
 Chat::Chat(const Chat &copy) { *this = copy; }
@@ -87,7 +89,8 @@ void Chat::newClientHandler()
 		// сохраняю фд клиента в класс
 		client.setFd(fdnew);
 	client.setStatus(NEW_CLIENT);
-	client.authorization();
+//	client.authorization();
+    sendMessageToClient(client, "Enter password: ");
 	// добавляю клиента в вектор
 	m_clients.push_back(client);
 }
@@ -128,7 +131,7 @@ void Chat::putNickname(Clients &src)
 	if (input.empty())
 		sendMessageToClient(src, "I can't identify you if you put empty nickname."
 								 " Try again!\nPlease enter your nickname: ");
-	else if (checkNicknameAlreadyUsed(m_clients, src))
+	else if (checkNicknameAlreadyUsed(m_clients, input))
 		sendMessageToClient(src, "Such a nickname already exists. "
 								 "Please choose another option.\nPlease enter"
 								 " your nickname: ");
@@ -169,6 +172,35 @@ void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 	sendMessageToClient(src, output);
 }
 
+void    Chat::changeNickname(Clients &src, vector<string> &cmd)
+{
+    if (cmd.size() != 2)
+        sendMessageToClient(src, "Correct format:\nNICK <nickname>\n");
+    else if (cmd[1].front() == '\n')
+        sendMessageToClient(src, "I can't identify you if you put empty nickname."
+                                  " Try again!\n");
+    else if (checkNicknameAlreadyUsed(m_clients, cmd[1]))
+        sendMessageToClient(src, "Such a nickname already exists. "
+                                 "Please choose another option.\n");
+    else
+    {
+        src.setNickname(ft_strtrim(cmd[1], "\n"));
+        sendMessageToClient(src, "Nickname was change to " + src.getNickname() + "\n");
+    }
+}
+
+void Chat::quitClient(Clients &src, vector<string> &cmd)
+{
+    for (int i = 0; i < m_clients.size(); ++i)
+    {
+        if (m_clients[i].getFd() == src.getFd())
+        {
+            close(src.getFd());
+            m_clients.erase(m_clients.begin() + i);
+        }
+    }
+}
+
 bool Chat::checkCommand(Clients &src)
 {
 	string input = src.getMessage();
@@ -178,6 +210,7 @@ bool Chat::checkCommand(Clients &src)
 		if (ft_strtrim(cmd[0], "\n") == m_commands[i].s_commandName)
 		{
 			(this->*m_commands[i].f)(src, cmd);
+	        src.setMessage("");
 			return true;
 		}
 	}

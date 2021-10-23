@@ -49,10 +49,10 @@ public:
 	std::string 	getMessage();
 	void 			setMessage(string src);
 	void 			appendMessage(string src);
-	void 			setNickname(string &nickname);
+	void 			setNickname(const string &nickname);
 	void 			setStatus(STATUSFLAG statusflag);
 	void 			setFd(int fd);
-	void 			authorization();
+//	void 			authorization();
 };
 
 std::string			ft_strtrim(const std::string &str, const std::string &set);

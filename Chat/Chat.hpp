@@ -35,12 +35,15 @@ public:
 	void 	putNickname(Clients &src);
 	void 	sendMessage(Clients &src);
 	void 	createChannel(Clients &src);
-	void 	printHelp(Clients &src, std::vector<string> &cmd);
 	int 	getMessage(Clients &src);
 	bool 	checkCommand(Clients &src);
+
+	void 	printHelp(Clients &src, std::vector<string> &cmd);
+	void	quitClient(Clients &src, vector<string> &cmd);
+	void    changeNickname(Clients &src, vector<string> &cmd);
 };
 
-int			checkNicknameAlreadyUsed(std::vector<Clients> &clients, Clients &src);
+bool 		checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input);
 int			checkEmptyMessage(Clients &src);
 void		sendMessageToClient(Clients &src, string output);
 std::vector<std::string>	ft_split(std::string str, const std::string &del);
