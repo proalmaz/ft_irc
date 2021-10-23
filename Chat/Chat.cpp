@@ -3,14 +3,15 @@
 Chat::Chat() : m_fds(-1), m_password("123")
 {
 	m_commands[0].s_commandName = "HELP";
+	m_commands[0].f = &Chat::printHelp;
 	m_commands[1].s_commandName = "KICK";
 	m_commands[2].s_commandName = "JOIN";
 	m_commands[3].s_commandName = "PRIVMSG";
+	m_commands[3].f = &Chat::sendPrivateMessage;
 	m_commands[4].s_commandName = "QUIT";
+	m_commands[4].f = &Chat::quitClient;
 	m_commands[5].s_commandName = "LEAVE";
 	m_commands[6].s_commandName = "NICK";
-	m_commands[0].f = &Chat::printHelp;
-	m_commands[4].f = &Chat::quitClient;
 	m_commands[6].f = &Chat::changeNickname;
 }
 
@@ -116,29 +117,29 @@ void Chat::checkPassword(Clients &src)
 	if (input == m_password)
 	{
 
-		sendMessageToClient(src, "Authorization success!\n"
-								 "Please enter you nickname: ");
+		sendMessageToClient(src, B_GREEN "Authorization success!\n"
+								 "Please enter you nickname: " NO_COLOR);
 		src.setStatus(AUTHORIZED_PASSWORD);
 	}
 	else
-		sendMessageToClient(src, "Authorization failed!\n"
-								 "Please enter correct password: ");
+		sendMessageToClient(src,  B_RED "Authorization failed!\n"
+								 "Please enter correct password: " NO_COLOR);
 }
 
 void Chat::putNickname(Clients &src)
 {
 	std::string input = ft_strtrim(src.getMessage(), "\n");
 	if (input.empty())
-		sendMessageToClient(src, "I can't identify you if you put empty nickname."
-								 " Try again!\nPlease enter your nickname: ");
+		sendMessageToClient(src, B_RED "I can't identify you if you put empty nickname."
+								 " Try again!\nPlease enter your nickname: " NO_COLOR);
 	else if (checkNicknameAlreadyUsed(m_clients, input))
-		sendMessageToClient(src, "Such a nickname already exists. "
+		sendMessageToClient(src, B_RED "Such a nickname already exists. "
 								 "Please choose another option.\nPlease enter"
-								 " your nickname: ");
+								 " your nickname: " NO_COLOR );
 	else
 	{
-		sendMessageToClient(src, "Welcome to our chat " + input + "!\n"
-		"Enter HELP for show a list of available commands\n");
+		sendMessageToClient(src, B_GREEN "Welcome to our chat " + input + "!\n"
+		"Enter HELP for show a list of available commands\n" NO_COLOR);
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
 	}
@@ -160,6 +161,23 @@ void Chat::createChannel(Clients &src)
 
 }
 
+void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
+{
+    if (cmd.size() != 3 || cmd[2].front() == '\n')
+        sendMessageToClient(src, B_RED "Correct format:\nPRIVMSG <nickname> <message>\n" NO_COLOR);
+    else
+    {
+        if (cmd[1] == src.getNickname())
+            return;
+        for (int i = 0; i < m_clients.size(); ++i)
+        {
+            if (m_clients[i].getNickname() == cmd[1])
+                return sendMessageToClient(m_clients[i], B_PURPLE + src.getNickname() + " whispered you: " + cmd[2] + NO_COLOR);
+        }
+        sendMessageToClient(src, B_RED + cmd[1] + " does not exist.\n" NO_COLOR);
+    }
+}
+
 void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 {
 	std::string output = "HELP 	- show a list of available commands.\n"
@@ -175,17 +193,17 @@ void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 void    Chat::changeNickname(Clients &src, vector<string> &cmd)
 {
     if (cmd.size() != 2)
-        sendMessageToClient(src, "Correct format:\nNICK <nickname>\n");
+        sendMessageToClient(src, B_RED "Correct format:\nNICK <nickname>\n" NO_COLOR);
     else if (cmd[1].front() == '\n')
-        sendMessageToClient(src, "I can't identify you if you put empty nickname."
-                                  " Try again!\n");
+        sendMessageToClient(src, B_RED "I can't identify you if you put empty nickname."
+                                  " Try again!\n" NO_COLOR);
     else if (checkNicknameAlreadyUsed(m_clients, cmd[1]))
-        sendMessageToClient(src, "Such a nickname already exists. "
-                                 "Please choose another option.\n");
+        sendMessageToClient(src, B_RED "Such a nickname already exists. "
+                                 "Please choose another option.\n" NO_COLOR);
     else
     {
         src.setNickname(ft_strtrim(cmd[1], "\n"));
-        sendMessageToClient(src, "Nickname was change to " + src.getNickname() + "\n");
+        sendMessageToClient(src, B_GREEN "Nickname was change to " + src.getNickname() + "\n" NO_COLOR );
     }
 }
 
