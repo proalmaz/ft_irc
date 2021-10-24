@@ -38,6 +38,7 @@ public:
 	int 	getMessage(Clients &src);
 	bool 	checkCommand(Clients &src);
 
+//	void	kick(Clients &src, vector<string> &cmd);
 	void 	printHelp(Clients &src, vector<string> &cmd);
 	void 	createChannel(Clients &src, vector<string> &cmd);
 	void	quitClient(Clients &src, vector<string> &cmd);

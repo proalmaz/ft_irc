@@ -3,6 +3,7 @@ NAME	=	ircserv
 SRC		=	main.cpp \
 			Clients/Clients.cpp \
 			Chat/Chat.cpp \
+			Chat/CommandChat.cpp \
 			Channel/Channel.cpp \
 			Utils/utils.cpp \
 

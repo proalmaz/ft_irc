@@ -44,9 +44,9 @@ STATUSFLAG		Clients::getStatus() {return m_status;}
 
 std::string Clients::getNickname() { return m_nickname; }
 
-void 		Clients::setChannel(Channel &channel)
+void 		Clients::setChannel(Channel *channel)
 {
-	m_channel = &channel;
+	m_channel = channel;
 }
 
 Channel		*Clients::getChannel()

@@ -30,6 +30,7 @@ class Clients
 {
 private:
 	string		m_nickname;
+//	string		m_name; Для имени клиента
 	string		m_message;
 	STATUSFLAG	m_status;
 	int			m_fd;
@@ -54,7 +55,7 @@ public:
 	void 			setMessage(string src);
 	void 			appendMessage(string src);
 	void 			setNickname(const string &nickname);
-	void 			setChannel(Channel &channel);
+	void 			setChannel(Channel *channel);
 	void 			setStatus(STATUSFLAG statusflag);
 	void 			setFd(int fd);
 };
