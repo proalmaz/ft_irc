@@ -21,5 +21,6 @@ public:
 	Clients					*getAdmin();
 	vector<Clients *>		getUsers();
 
+	void 					removeUser(Clients &src);
 	void 					addUser(Clients &client);
 };

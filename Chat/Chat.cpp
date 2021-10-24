@@ -5,6 +5,7 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[0].s_commandName = "HELP";
 	m_commands[0].f = &Chat::printHelp;
 	m_commands[1].s_commandName = "KICK";
+	m_commands[1].f = &Chat::kick;
 	m_commands[2].s_commandName = "JOIN";
 	m_commands[2].f = &Chat::createChannel;
 	m_commands[3].s_commandName = "PRIVMSG";

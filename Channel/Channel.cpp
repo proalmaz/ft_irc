@@ -36,6 +36,17 @@ Clients		*Channel::getAdmin() { return m_admin; }
 
 std::string Channel::getName() { return m_name; }
 
+void 		Channel::removeUser(Clients &user)
+{
+	for (int i = 0; i < m_users.size(); ++i)
+	{
+		if (&user == m_users[i])
+		{
+			m_users.erase(m_users.begin() + i);
+		}
+	}
+}
+
 void 		Channel::addUser(Clients &client)
 {
 	m_users.push_back(&client);
