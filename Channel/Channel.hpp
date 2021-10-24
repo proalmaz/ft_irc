@@ -6,7 +6,7 @@ class Channel
 {
 private:
 	string					m_name;
-	std::vector<Clients>	m_users;
+	std::vector<Clients *>	m_users;
 	Clients					*m_admin;
 
 public:

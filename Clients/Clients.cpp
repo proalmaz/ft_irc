@@ -39,13 +39,17 @@ void 			Clients::setStatus(STATUSFLAG statusflag)
 
 STATUSFLAG		Clients::getStatus() {return m_status;}
 
-//void Clients::authorization()
-//{
-//	string str = "Enter password: ";
-//	send(m_fd, str.c_str(), str.length(), 0);
-//}
-
 std::string Clients::getNickname() { return m_nickname; }
+
+void 		Clients::setChannel(Channel &channel)
+{
+	m_channel = &channel;
+}
+
+Channel		*Clients::getChannel()
+{
+	return m_channel;
+}
 
 void 		Clients::setNickname(const string &nickname)
 {

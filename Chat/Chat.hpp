@@ -13,8 +13,8 @@ private:
 		void 				(Chat::*f)(Clients &src, std::vector<string> &cmd);
 	};
 	int						m_fds;
-	std::vector<Clients>	m_clients;
-//	std::vector<Channel>	m_channels;
+	vector<Clients>			m_clients;
+	vector<Channel>			m_channels;
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
@@ -35,20 +35,20 @@ public:
 	void 	checkPassword(Clients &src);
 	void 	putNickname(Clients &src);
 	void 	sendMessage(Clients &src);
-	void 	createChannel(Clients &src);
 	int 	getMessage(Clients &src);
 	bool 	checkCommand(Clients &src);
 
-	void 	printHelp(Clients &src, std::vector<string> &cmd);
+	void 	printHelp(Clients &src, vector<string> &cmd);
+	void 	createChannel(Clients &src, vector<string> &cmd);
 	void	quitClient(Clients &src, vector<string> &cmd);
 	void    changeNickname(Clients &src, vector<string> &cmd);
 	void    sendPrivateMessage(Clients &src, vector<string> &cmd);
 };
 
-bool 		checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input);
-int			checkEmptyMessage(Clients &src);
-void		sendMessageToClient(Clients &src, string output);
-std::vector<std::string>	ft_split(std::string str, const std::string &del);
+bool 			checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input);
+int				checkEmptyMessage(Clients &src);
+void			sendMessageToClient(Clients &src, string output);
+vector<string>	ft_split(std::string str, const std::string &del);
 
 # define	NO_COLOR	"\033[0m"
 

@@ -6,6 +6,7 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[0].f = &Chat::printHelp;
 	m_commands[1].s_commandName = "KICK";
 	m_commands[2].s_commandName = "JOIN";
+	m_commands[2].f = &Chat::createChannel;
 	m_commands[3].s_commandName = "PRIVMSG";
 	m_commands[3].f = &Chat::sendPrivateMessage;
 	m_commands[4].s_commandName = "QUIT";
@@ -38,9 +39,11 @@ void Chat::socketPreparation()
 	// создание фд сокета
 	m_fds = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_fds == -1)
-		exit(1);
+		throw string("Error: socket\n");
 	int reuseOpt = 1;
-	setsockopt(m_fds, SOL_SOCKET, SO_REUSEADDR, &reuseOpt, sizeof(reuseOpt));
+	if (setsockopt(m_fds, SOL_SOCKET, SO_REUSEADDR, &reuseOpt, sizeof
+		(reuseOpt)) == -1)
+		throw string("Error: setsockopt\n");
 	// мы говорим, что будем использовать ТСP протокол
 	addr.sin_family = AF_INET;
 	// порт любой, кроме (1 - 1023)
@@ -48,16 +51,13 @@ void Chat::socketPreparation()
 	// 127.0.0.1
 //	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	if (!inet_aton("127.0.0.1", &(addr.sin_addr)))
-	{
-		cout << "not valid ip address\n";
-		exit(1);
-	}
+		throw string("not valid ip address\n");
 	// связываем фд сокета со структурой адреса
 	if (bind(m_fds, (const struct sockaddr *)&addr, sizeof(addr)) == -1) //
-		exit(111);
+		throw string("Error: bind\n");
 	// переводим сокет в режим прослушки
 	if (listen(m_fds, 128) != 0)
-		exit(1);
+		throw string("Error: listen\n");
 }
 
 void Chat::putFdSpace()
@@ -151,14 +151,33 @@ void Chat::sendMessage(Clients &src)
 	for (int i = 0; i < m_clients.size(); ++i)
 	{
 		if (m_clients[i].getFd() != src.getFd()
-		&& m_clients[i].getStatus()	== AUTHORIZED_NICK)
+		&& m_clients[i].getStatus()	== AUTHORIZED_NICK
+		&& src.getChannel() == m_clients[i].getChannel())
 			sendMessageToClient(m_clients[i], src.getNickname() + ": " + input);
 	}
 }
 
-void Chat::createChannel(Clients &src)
+void Chat::createChannel(Clients &src, vector<string> &cmd)
 {
-
+	if (cmd.size() != 2 || cmd[1].front() == '\n' || cmd[1].front() != '#')
+		return sendMessageToClient(src, B_RED "Correct format:\nJOIN "
+									   "#<channel name>\n" NO_COLOR);
+	string name = ft_strtrim(cmd[1], "\n");
+	for (int i = 0; i < m_channels.size(); ++i)
+	{
+		if (m_channels[i].getName() == name)
+		{
+			m_channels[i].addUser(src);
+			src.setChannel(m_channels[i]);
+			sendMessageToClient(src, B_GREEN "You are joined to channel " +
+			m_channels[i].getName() + "\n" NO_COLOR);
+			return;
+		}
+	}
+	m_channels.push_back(Channel(name, src));
+	src.setChannel(m_channels.at(m_channels.size() - 1));
+	sendMessageToClient(src, B_GREEN "You are created channel " +
+	m_channels.back().getName() + "\n" NO_COLOR);
 }
 
 void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
@@ -255,9 +274,6 @@ int Chat::getMessage(Clients &src)
 			&& src.getMessage().front() != '\n')
 		sendMessage(src);
 	src.setMessage("");
-//	else if (src.getStatus() == AUTHORIZED_NICK && src.getMessage() ==
-//	"create channel")
-//		createChannel(src);
 	return CLIENT_ALL_RIGHT;
 }
 
@@ -267,7 +283,7 @@ void Chat::runChat()
 	{
 		putFdSpace();
 		// отлавливаем фдшник на котором произошло событие
-		if (select(m_max_fd + 1, &m_rfd, 0, 0, 0) < 1)
+		if (select(m_max_fd + 1, &m_rfd, 0, 0, 0) < 0)
 			exit(1);
 		// проверяем есть ли фд сокета в нашем множестве
 		if (FD_ISSET(m_fds, &m_rfd))

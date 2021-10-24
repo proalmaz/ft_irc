@@ -24,6 +24,8 @@ enum STATUSFLAG
 	AUTHORIZED_NICK,
 };
 
+class Channel;
+
 class Clients
 {
 private:
@@ -33,6 +35,7 @@ private:
 	int			m_fd;
 	sockaddr_in	m_addr;
 	socklen_t	m_len;
+	Channel		*m_channel;
 
 public:
 	Clients();
@@ -45,14 +48,15 @@ public:
 	sockaddr_in 	*getAddr();
 	socklen_t 		*getLen();
 	STATUSFLAG		getStatus();
-	std::string		getNickname();
-	std::string 	getMessage();
+	string			getNickname();
+	string 			getMessage();
+	Channel			*getChannel();
 	void 			setMessage(string src);
 	void 			appendMessage(string src);
 	void 			setNickname(const string &nickname);
+	void 			setChannel(Channel &channel);
 	void 			setStatus(STATUSFLAG statusflag);
 	void 			setFd(int fd);
-//	void 			authorization();
 };
 
 std::string			ft_strtrim(const std::string &str, const std::string &set);
