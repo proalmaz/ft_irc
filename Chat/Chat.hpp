@@ -13,8 +13,8 @@ private:
 		void 				(Chat::*f)(Clients &src, std::vector<string> &cmd);
 	};
 	int						m_fds;
-	vector<Clients>			m_clients;
-	vector<Channel>			m_channels;
+	vector<Clients *>		m_clients;
+	vector<Channel *>		m_channels;
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
@@ -45,7 +45,8 @@ public:
 	void    sendPrivateMessage(Clients &src, vector<string> &cmd);
 };
 
-bool 			checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input);
+bool 			checkNicknameAlreadyUsed(std::vector<Clients *> &clients,
+										  string input);
 int				checkEmptyMessage(Clients &src);
 void			sendMessageToClient(Clients &src, string output);
 vector<string>	ft_split(std::string str, const std::string &del);

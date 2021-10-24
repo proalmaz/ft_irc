@@ -1,6 +1,6 @@
 #include "Clients.hpp"
 
-Clients::Clients()
+Clients::Clients() : m_channel(nullptr)
 {
 	m_message = "";
 	bzero(&m_addr, sizeof(m_addr));
@@ -19,6 +19,9 @@ Clients			&Clients::operator=(const Clients &copy)
 	m_addr = copy.m_addr;
 	m_len = copy.m_len;
 	m_fd = copy.m_fd;
+	if (m_channel != nullptr)
+		free(m_channel);
+	m_channel = copy.m_channel;
 	return *this;
 }
 

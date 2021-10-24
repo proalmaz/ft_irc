@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel() {}
+Channel::Channel() : m_users(0),  m_name(""), m_admin(0) {}
 
 Channel::Channel(string name, Clients &admin) : m_name(name), m_admin(&admin)
 {
@@ -21,7 +21,13 @@ Channel		&Channel::operator=(Channel const &copy)
 	if (this == &copy)
 		return *this;
 	m_name = copy.m_name;
-	m_users = copy.m_users;
+	if (!m_users.empty())
+		for (int i = 0; i < m_users.size(); ++i)
+			free(m_users[i]);
+	for (int i = 0; i < copy.m_users.size(); ++i)
+		m_users[i] = copy.m_users[i];
+	if (m_admin)
+		free(m_admin);
 	m_admin = copy.m_admin;
 	return *this;
 }

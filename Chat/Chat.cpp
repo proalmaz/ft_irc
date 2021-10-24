@@ -47,7 +47,7 @@ void Chat::socketPreparation()
 	// мы говорим, что будем использовать ТСP протокол
 	addr.sin_family = AF_INET;
 	// порт любой, кроме (1 - 1023)
-	addr.sin_port = htons(8080);
+	addr.sin_port = htons(8081);
 	// 127.0.0.1
 //	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	if (!inet_aton("127.0.0.1", &(addr.sin_addr)))
@@ -70,28 +70,28 @@ void Chat::putFdSpace()
 	for (int i = 0; i < m_clients.size(); ++i)
 	{
 		// добавляем фд клиентов в это множество
-		FD_SET(m_clients[i].getFd(), &m_rfd);
-		if (m_clients[i].getFd() > m_max_fd)
+		FD_SET(m_clients[i]->getFd(), &m_rfd);
+		if (m_clients[i]->getFd() > m_max_fd)
 			// ищем и сохраняем макс фдшник
-			m_max_fd = m_clients[i].getFd();
+			m_max_fd = m_clients[i]->getFd();
 	}
 }
 
 void Chat::newClientHandler()
 {
 	// создаем нового клиента
-	Clients client;
+	Clients *client = new Clients();
 	// принимаем новый фд, попутно заполняя его объект адрессом
-	int fdnew = accept(m_fds, (sockaddr *)(client.getAddr()),
-					   client.getLen());
+	int fdnew = accept(m_fds, (sockaddr *)(client->getAddr()),
+					   client->getLen());
 	if (fdnew < 0)
 		exit(1);
 	else
 		// сохраняю фд клиента в класс
-		client.setFd(fdnew);
-	client.setStatus(NEW_CLIENT);
+		client->setFd(fdnew);
+	client->setStatus(NEW_CLIENT);
 //	client.authorization();
-    sendMessageToClient(client, "Enter password: ");
+    sendMessageToClient(*client, "Enter password: ");
 	// добавляю клиента в вектор
 	m_clients.push_back(client);
 }
@@ -100,11 +100,11 @@ void Chat::checkClientsFd()
 {
 	for (int i = 0; i < m_clients.size(); ++i)
 	{
-		if (FD_ISSET(m_clients[i].getFd(), &m_rfd))
+		if (FD_ISSET(m_clients[i]->getFd(), &m_rfd))
 		{
-			if (getMessage(m_clients[i]) == CLIENT_OFF)
+			if (getMessage(*m_clients[i]) == CLIENT_OFF)
 			{
-				close(m_clients[i].getFd());
+				close(m_clients[i]->getFd());
 				m_clients.erase(m_clients.begin() + i);
 			}
 		}
@@ -147,13 +147,20 @@ void Chat::putNickname(Clients &src)
 
 void Chat::sendMessage(Clients &src)
 {
-	std::string input = src.getMessage();
-	for (int i = 0; i < m_clients.size(); ++i)
+	string input = src.getMessage();
+	if (src.getChannel() == nullptr)
+		sendMessageToClient(src, B_RED "Create or join channel.\nEnter HELP "
+		"for more info.\n" NO_COLOR);
+	else
 	{
-		if (m_clients[i].getFd() != src.getFd()
-		&& m_clients[i].getStatus()	== AUTHORIZED_NICK
-		&& src.getChannel()->getName() == m_clients[i].getChannel()->getName())
-			sendMessageToClient(m_clients[i], src.getNickname() + ": " + input);
+		vector<Clients *> tmp = src.getChannel()->getUsers();
+		for (int i = 0; i < tmp.size(); ++i)
+		{
+			if (tmp[i]->getFd() != src.getFd())
+				sendMessageToClient(*tmp[i], B_YELLOW + src.getChannel()
+				->getName() + NO_COLOR ": " + src.getNickname() + ": " +
+				input);
+		}
 	}
 }
 
@@ -165,19 +172,19 @@ void Chat::createChannel(Clients &src, vector<string> &cmd)
 	string name = ft_strtrim(cmd[1], "\n");
 	for (int i = 0; i < m_channels.size(); ++i)
 	{
-		if (m_channels[i].getName() == name)
+		if (m_channels[i]->getName() == name)
 		{
-			m_channels[i].addUser(src);
-			src.setChannel(m_channels[i]);
+			m_channels[i]->addUser(src);
+			src.setChannel(*m_channels[i]);
 			sendMessageToClient(src, B_GREEN "You are joined to channel " +
-			m_channels[i].getName() + "\n" NO_COLOR);
+			m_channels[i]->getName() + "\n" NO_COLOR);
 			return;
 		}
 	}
-	m_channels.push_back(Channel(name, src));
-	src.setChannel(m_channels.at(m_channels.size() - 1));
+	m_channels.push_back( new Channel(name, src));
+	src.setChannel(*m_channels.at(m_channels.size() - 1));
 	sendMessageToClient(src, B_GREEN "You are created channel " +
-	m_channels.back().getName() + "\n" NO_COLOR);
+	m_channels.back()->getName() + "\n" NO_COLOR);
 }
 
 void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
@@ -190,8 +197,9 @@ void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
             return;
         for (int i = 0; i < m_clients.size(); ++i)
         {
-            if (m_clients[i].getNickname() == cmd[1])
-                return sendMessageToClient(m_clients[i], B_PURPLE + src.getNickname() + " whispered you: " + cmd[2] + NO_COLOR);
+            if (m_clients[i]->getNickname() == cmd[1])
+                return sendMessageToClient(*m_clients[i], B_PURPLE +
+                src.getNickname() + " whispered you: " + cmd[2] + NO_COLOR);
         }
         sendMessageToClient(src, B_RED + cmd[1] + " does not exist.\n" NO_COLOR);
     }
@@ -230,7 +238,7 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 {
     for (int i = 0; i < m_clients.size(); ++i)
     {
-        if (m_clients[i].getFd() == src.getFd())
+        if (m_clients[i]->getFd() == src.getFd())
         {
             close(src.getFd());
             m_clients.erase(m_clients.begin() + i);

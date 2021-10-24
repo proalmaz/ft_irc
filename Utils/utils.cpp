@@ -23,12 +23,12 @@ int	checkEmptyMessage(Clients &src)
 	return 0;
 }
 
-bool checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input)
+bool checkNicknameAlreadyUsed(std::vector<Clients *> &clients, string input)
 {
 	input = ft_strtrim(input, "\n");
 	for (int i = 0; i < clients.size(); ++i)
 	{
-		if (clients[i].getNickname() == input)
+		if (clients[i]->getNickname() == input)
 			return true;
 	}
 	return false;
