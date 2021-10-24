@@ -11,6 +11,8 @@ void Chat::createChannel(Clients &src, vector<string> &cmd)
 		if (m_channels[i]->getName() == name)
 		{
 			m_channels[i]->addUser(src);
+			if (src.getChannel() != nullptr)
+				src.getChannel()->removeUser(src);
 			src.setChannel(m_channels[i]);
 			sendMessageToClient(src, B_GREEN "You are joined to channel " +
 			m_channels[i]->getName() + "\n" NO_COLOR);
@@ -18,6 +20,8 @@ void Chat::createChannel(Clients &src, vector<string> &cmd)
 		}
 	}
 	m_channels.push_back( new Channel(name, src));
+	if (src.getChannel() != nullptr)
+		src.getChannel()->removeUser(src);
 	src.setChannel(m_channels.at(m_channels.size() - 1));
 	sendMessageToClient(src, B_GREEN "You are created channel " +
 	m_channels.back()->getName() + "\n" NO_COLOR);
