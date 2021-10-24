@@ -152,7 +152,7 @@ void Chat::sendMessage(Clients &src)
 	{
 		if (m_clients[i].getFd() != src.getFd()
 		&& m_clients[i].getStatus()	== AUTHORIZED_NICK
-		&& src.getChannel() == m_clients[i].getChannel())
+		&& src.getChannel()->getName() == m_clients[i].getChannel()->getName())
 			sendMessageToClient(m_clients[i], src.getNickname() + ": " + input);
 	}
 }

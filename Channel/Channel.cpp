@@ -34,3 +34,5 @@ void 		Channel::addUser(Clients &client)
 {
 	m_users.push_back(&client);
 }
+
+vector<Clients *> Channel::getUsers() { return m_users; }

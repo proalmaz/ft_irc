@@ -36,10 +36,6 @@ bool checkNicknameAlreadyUsed(std::vector<Clients> &clients, string input)
 
 void	sendMessageToClient(Clients &src, string output)
 {
-	if (src.getChannel() != NULL)
-	{
-
-	}
 	send(src.getFd(), output.c_str(), output.length(), 0);
 }
 

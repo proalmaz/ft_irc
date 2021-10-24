@@ -1,4 +1,4 @@
-NAME	=	IRC
+NAME	=	ircserv
 
 SRC		=	main.cpp \
 			Clients/Clients.cpp \
