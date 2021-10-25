@@ -16,6 +16,9 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[5].f = &Chat::leave;
 	m_commands[6].s_commandName = "NICK";
 	m_commands[6].f = &Chat::changeNickname;
+	m_commands[7].s_commandName = "LIST";
+	m_commands[7].f = &Chat::list;
+	m_commands[8].s_commandName = "WHO";
 }
 
 Chat::Chat(const Chat &copy) { *this = copy; }
@@ -170,7 +173,7 @@ bool Chat::checkCommand(Clients &src)
 {
 	string input = src.getMessage();
 	vector<string> cmd = ft_split(input, " ");
-	for (int i = 0; i < 7; ++i)
+	for (int i = 0; i < 9; ++i)
 	{
 		if (ft_strtrim(cmd[0], "\n") == m_commands[i].s_commandName)
 		{

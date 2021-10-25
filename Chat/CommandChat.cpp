@@ -29,11 +29,9 @@ void Chat::createChannel(Clients &src, vector<string> &cmd)
 
 void 	Chat::leave(Clients &src, vector<string> &cmd)
 {
-	if (cmd.size() != 1 || cmd[1].front() == '\n')
-	{
+	if (cmd.size() != 1 || cmd[0].front() == '\n')
 		return sendMessageToClient(src, B_RED "Correct format:\nLEAVE\n"
 		NO_COLOR);
-	}
 	if (src.getChannel() == nullptr)
 		return sendMessageToClient(src, B_RED "You are not a member of any "
 										"channel.\n" NO_COLOR);
@@ -143,5 +141,20 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 			close(src.getFd());
 			m_clients.erase(m_clients.begin() + i);
 		}
+	}
+}
+
+void Chat::list(Clients &src, vector<string> &cmd)
+{
+	if (cmd.size() != 1 || cmd[0].front() == '\n')
+		return sendMessageToClient(src, B_RED "Correct format:\nLIST\n"
+		NO_COLOR);
+	if (m_channels.size() == 0)
+		return sendMessageToClient(src, B_RED "No channel.\n"
+		NO_COLOR);
+	for (int i = 0; i < m_channels.size(); ++i)
+	{
+		sendMessageToClient(src, B_YELLOW + std::to_string(i + 1)
+		+ ". "+ m_channels[i]->getName() + NO_COLOR "\n");
 	}
 }
