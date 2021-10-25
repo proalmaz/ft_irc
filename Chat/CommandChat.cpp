@@ -27,6 +27,28 @@ void Chat::createChannel(Clients &src, vector<string> &cmd)
 	m_channels.back()->getName() + "\n" NO_COLOR);
 }
 
+void 	Chat::leave(Clients &src, vector<string> &cmd)
+{
+	if (cmd.size() != 1 || cmd[1].front() == '\n')
+	{
+		return sendMessageToClient(src, B_RED "Correct format:\nLEAVE\n"
+		NO_COLOR);
+	}
+	if (src.getChannel() == nullptr)
+		return sendMessageToClient(src, B_RED "You are not a member of any "
+										"channel.\n" NO_COLOR);
+	for (int i = 0; i < m_channels.size(); ++i)
+	{
+		if (m_channels[i] == src.getChannel())
+		{
+			m_channels[i]->removeUser(src);
+			src.setChannel(nullptr);
+			return sendMessageToClient(src, B_GREEN "You have left the channel "
+			+ m_channels[i]->getName() + NO_COLOR "\n");
+		}
+	}
+}
+
 void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
 {
 	if (cmd.size() != 3 || cmd[2].front() == '\n')

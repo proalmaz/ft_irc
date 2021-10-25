@@ -13,6 +13,7 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[4].s_commandName = "QUIT";
 	m_commands[4].f = &Chat::quitClient;
 	m_commands[5].s_commandName = "LEAVE";
+	m_commands[5].f = &Chat::leave;
 	m_commands[6].s_commandName = "NICK";
 	m_commands[6].f = &Chat::changeNickname;
 }
