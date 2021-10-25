@@ -111,7 +111,9 @@ void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 						 "NICK 	- change nickname.\n"
 						 "PRIVMSG	- send private message somebody.\n"
 						 "QUIT	- leave a chat.\n"
-						 "LEAVE	- leave a channel.\n";
+						 "LEAVE	- leave a channel.\n"
+						 "LIST	- channel list.\n"
+						 "WHO	- channel list.\n";
 	sendMessageToClient(src, output);
 }
 
@@ -155,6 +157,7 @@ void Chat::list(Clients &src, vector<string> &cmd)
 	for (int i = 0; i < m_channels.size(); ++i)
 	{
 		sendMessageToClient(src, B_YELLOW + std::to_string(i + 1)
-		+ ". "+ m_channels[i]->getName() + NO_COLOR "\n");
+		+ ". "+ m_channels[i]->getName() + " members(" +
+		std::to_string(m_channels[i]->getUsers().size()) + ")" NO_COLOR "\n");
 	}
 }
