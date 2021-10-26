@@ -163,6 +163,14 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 		{
 			close(src.getFd());
 			m_clients.erase(m_clients.begin() + i);
+			vector<Clients *> tmp = m_clients[i]->getChannel()->getUsers();
+			for (int j = 0; j < tmp.size(); ++j)
+			{
+				if (tmp[j] == &src)
+					continue;
+				sendMessageToClient(*tmp[j], B_CYAN + src.getNickname() +
+				" has left the channel.\n" NO_COLOR);
+			}
 		}
 	}
 }
