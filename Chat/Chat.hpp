@@ -18,7 +18,7 @@ private:
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
-	s_command				m_commands[10];
+	s_command				m_commands[11];
 
 public:
 	Chat();
@@ -39,6 +39,7 @@ public:
 	int 	getMessage(Clients &src);
 	bool 	checkCommand(Clients &src);
 
+	void 	whoin(Clients &src, vector<string> &cmd);
 	void 	whois(Clients &src, vector<string> &cmd);
 	void 	who(Clients &src, vector<string> &cmd);
 	void 	list(Clients &src, vector<string> &cmd);
