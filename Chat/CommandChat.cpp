@@ -16,6 +16,14 @@ void Chat::createChannel(Clients &src, vector<string> &cmd)
 			src.setChannel(m_channels[i]);
 			sendMessageToClient(src, B_GREEN "You are joined to channel " +
 			m_channels[i]->getName() + "\n" NO_COLOR);
+			vector<Clients *> tmp = m_channels[i]->getUsers();
+			for (int j = 0; j < tmp.size(); ++j)
+			{
+				if (tmp[j] == &src)
+					continue;
+				sendMessageToClient(*tmp[j], B_CYAN + src.getNickname() +
+				" joined the channel.\n" NO_COLOR);
+			}
 			return;
 		}
 	}
@@ -41,6 +49,14 @@ void 	Chat::leave(Clients &src, vector<string> &cmd)
 		{
 			m_channels[i]->removeUser(src);
 			src.setChannel(nullptr);
+			vector<Clients *> tmp = m_channels[i]->getUsers();
+			for (int j = 0; j < tmp.size(); ++j)
+			{
+				if (tmp[j] == &src)
+					continue;
+				sendMessageToClient(*tmp[j], B_CYAN + src.getNickname() +
+				" has left the channel.\n" NO_COLOR);
+			}
 			return sendMessageToClient(src, B_GREEN "You have left the channel "
 			+ m_channels[i]->getName() + NO_COLOR "\n");
 		}
