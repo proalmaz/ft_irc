@@ -113,7 +113,8 @@ void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 						 "QUIT	- leave a chat.\n"
 						 "LEAVE	- leave a channel.\n"
 						 "LIST	- channel list.\n"
-						 "WHO	- channel list.\n";
+						 "WHO	- list of members in this channel.\n"
+						 "WHOIS	- information about the member.\n";
 	sendMessageToClient(src, output);
 }
 
@@ -182,4 +183,21 @@ void Chat::list(Clients &src, vector<string> &cmd)
 		+ ". "+ m_channels[i]->getName() + " members(" +
 		std::to_string(m_channels[i]->getUsers().size()) + ")" NO_COLOR "\n");
 	}
+}
+
+void Chat::whois(Clients &src, vector<string> &cmd)
+{
+	if (cmd.size() != 2 || cmd[1].front() == '\n')
+		sendMessageToClient(src, B_RED "Correct format:\nWHOIS <nickname> \n"
+		NO_COLOR);
+	string nick = ft_strtrim(cmd[1], "\n");
+	for (int i = 0; i < m_clients.size(); ++i)
+	{
+		if (nick == m_clients[i]->getNickname())
+			return sendMessageToClient(src, B_YELLOW "Nickname: " +
+			m_clients[i]->getNickname() + "\nName: " + m_clients[i]->getName() + NO_COLOR
+			"\n");;
+	}
+	sendMessageToClient(src, B_RED "Client not found.\n"
+	NO_COLOR);
 }
