@@ -109,7 +109,10 @@ void Chat::newClientHandler()
 	int fdnew = accept(m_fds, (sockaddr *)(client->getAddr()),
 					   client->getLen());
 	if (fdnew < 0)
-		exit(1);
+	{
+		free(client);
+		throw "Error: accept new client.\n";
+	}
 	else
 		// сохраняю фд клиента в класс
 		client->setFd(fdnew);
@@ -252,14 +255,21 @@ void Chat::runChat()
 {
 	while (1)
 	{
-		putFdSpace();
-		// отлавливаем фдшник на котором произошло событие
-		if (select(m_max_fd + 1, &m_rfd, 0, 0, 0) < 0)
-			exit(1);
-		// проверяем есть ли фд сокета в нашем множестве
-		if (FD_ISSET(m_fds, &m_rfd))
-			newClientHandler();
-		else
-			checkClientsFd();
+		try
+		{
+			putFdSpace();
+			// отлавливаем фдшник на котором произошло событие
+			if (select(m_max_fd + 1, &m_rfd, 0, 0, 0) < 0)
+				continue;
+			// проверяем есть ли фд сокета в нашем множестве
+			if (FD_ISSET(m_fds, &m_rfd))
+				newClientHandler();
+			else
+				checkClientsFd();
+		}
+		catch (string &exception)
+		{
+			cout << exception;
+		}
 	}
 }

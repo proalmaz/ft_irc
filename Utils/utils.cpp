@@ -36,7 +36,8 @@ bool checkNicknameAlreadyUsed(std::vector<Clients *> &clients, string input)
 
 void	sendMessageToClient(Clients &src, string output)
 {
-	send(src.getFd(), output.c_str(), output.length(), 0);
+	if (send(src.getFd(), output.c_str(), output.length(), 0) < 0)
+		throw "Error: send message to client.\n";
 }
 
 std::vector<std::string>	ft_split(std::string str, const std::string &del)
