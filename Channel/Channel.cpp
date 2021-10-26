@@ -7,12 +7,7 @@ Channel::Channel(string name, Clients &admin) : m_name(name), m_admin(&admin)
 	m_users.push_back(&admin);
 }
 
-Channel::~Channel()
-{
-//	for (int i = 0; i < m_users.size(); ++i)
-//		sendMessageToClient(*m_users[i],"Channel " + m_name +
-//		" was destroy.\n");
-}
+Channel::~Channel() {}
 
 Channel::Channel(Channel const &copy) { *this = copy; }
 

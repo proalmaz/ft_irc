@@ -37,9 +37,17 @@ Chat	&Chat::operator=(const Chat &copy)
 	m_rfd = copy.m_rfd;
 	m_max_fd = copy.m_max_fd;
 	m_fds = copy.m_fds;
-	m_clients = copy.m_clients;
+	if (!m_clients.empty())
+		for (int i = 0; i < m_clients.size(); ++i)
+			free(m_clients[i]);
+	for (int i = 0; i < copy.m_clients.size(); ++i)
+		m_clients[i] = copy.m_clients[i];
 	m_password = copy.m_password;
-//	m_channels = copy.m_channels;
+	if (!m_channels.empty())
+		for (int i = 0; i < m_channels.size(); ++i)
+			free(m_channels[i]);
+		for (int i = 0; i < copy.m_channels.size(); ++i)
+			m_channels[i] = copy.m_channels[i];
 	return *this;
 }
 
@@ -115,6 +123,8 @@ void Chat::checkClientsFd()
 			if (getMessage(*m_clients[i]) == CLIENT_OFF)
 			{
 				close(m_clients[i]->getFd());
+				if (m_clients[i]->getChannel() != nullptr)
+					m_clients[i]->getChannel()->removeUser(*m_clients[i]);
 				m_clients.erase(m_clients.begin() + i);
 			}
 		}
