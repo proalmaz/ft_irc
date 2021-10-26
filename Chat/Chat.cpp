@@ -125,6 +125,7 @@ void Chat::checkClientsFd()
 				close(m_clients[i]->getFd());
 				if (m_clients[i]->getChannel() != nullptr)
 					m_clients[i]->getChannel()->removeUser(*m_clients[i]);
+				free(m_clients[i]);
 				m_clients.erase(m_clients.begin() + i);
 			}
 		}
