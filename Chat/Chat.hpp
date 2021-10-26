@@ -34,6 +34,7 @@ public:
 	void 	checkClientsFd();
 	void 	checkPassword(Clients &src);
 	void 	putNickname(Clients &src);
+	void 	putUsername(Clients &src);
 	void 	sendMessage(Clients &src);
 	int 	getMessage(Clients &src);
 	bool 	checkCommand(Clients &src);

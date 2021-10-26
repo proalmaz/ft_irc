@@ -124,7 +124,7 @@ void Chat::checkPassword(Clients &src)
 	{
 
 		sendMessageToClient(src, B_GREEN "Authorization success!\n"
-								 "Please enter you nickname: " NO_COLOR);
+								 "Please enter your nickname: " NO_COLOR);
 		src.setStatus(AUTHORIZED_PASSWORD);
 	}
 	else
@@ -144,10 +144,25 @@ void Chat::putNickname(Clients &src)
 								 " your nickname: " NO_COLOR );
 	else
 	{
-		sendMessageToClient(src, B_GREEN "Welcome to our chat " + input + "!\n"
-		"Enter HELP for show a list of available commands\n" NO_COLOR);
+		sendMessageToClient(src, B_GREEN "Please enter your username: "
+		NO_COLOR);
 		src.setNickname(input);
 		src.setStatus(AUTHORIZED_NICK);
+	}
+}
+
+void Chat::putUsername(Clients &src)
+{
+	std::string input = ft_strtrim(src.getMessage(), "\n");
+	if (input.empty())
+		sendMessageToClient(src, B_RED "I can't identify you if you put empty"
+		" name. Try again!\nPlease enter your name: " NO_COLOR);
+	else
+	{
+		sendMessageToClient(src, B_GREEN "Welcome to our chat " + input + "!\n"
+		"Enter HELP for show a list of available commands\n" NO_COLOR);
+		src.setName(input);
+		src.setStatus(AUTHORIZED_USERNAME);
 	}
 }
 
@@ -200,9 +215,11 @@ int Chat::getMessage(Clients &src)
 		checkPassword(src);
 	else if (src.getStatus() == AUTHORIZED_PASSWORD)
 		putNickname(src);
+	else if (src.getStatus() == AUTHORIZED_NICK)
+		putUsername(src);
 	else if (checkCommand(src))
 		return CLIENT_ALL_RIGHT;
-	else if (src.getStatus() == AUTHORIZED_NICK
+	else if (src.getStatus() == AUTHORIZED_USERNAME
 			&& src.getMessage().front() != '\n')
 		sendMessage(src);
 	src.setMessage("");

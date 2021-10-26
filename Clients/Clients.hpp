@@ -21,6 +21,7 @@ enum STATUSFLAG
 {
 	NEW_CLIENT,
 	AUTHORIZED_PASSWORD,
+	AUTHORIZED_USERNAME,
 	AUTHORIZED_NICK,
 };
 
@@ -32,6 +33,7 @@ private:
 	string		m_nickname;
 //	string		m_name; Для имени клиента
 	string		m_message;
+	string		m_username;
 	STATUSFLAG	m_status;
 	int			m_fd;
 	sockaddr_in	m_addr;
@@ -52,6 +54,8 @@ public:
 	string			getNickname();
 	string 			getMessage();
 	Channel			*getChannel();
+	string			getName();
+	void 			setName(string name);
 	void 			setMessage(string src);
 	void 			appendMessage(string src);
 	void 			setNickname(const string &nickname);

@@ -14,6 +14,7 @@ Clients			&Clients::operator=(const Clients &copy)
 	if (this == &copy)
 		return *this;
 	m_nickname = copy.m_nickname;
+	m_username = copy.m_username;
 	m_message = copy.m_message;
 	m_status = copy.m_status;
 	m_addr = copy.m_addr;
@@ -42,7 +43,9 @@ void 			Clients::setStatus(STATUSFLAG statusflag)
 
 STATUSFLAG		Clients::getStatus() {return m_status;}
 
-std::string Clients::getNickname() { return m_nickname; }
+string		Clients::getNickname() { return m_nickname; }
+
+string		Clients::getName() { return m_username; }
 
 void 		Clients::setChannel(Channel *channel)
 {
@@ -57,6 +60,11 @@ Channel		*Clients::getChannel()
 void 		Clients::setNickname(const string &nickname)
 {
 	m_nickname = nickname;
+}
+
+void 		Clients::setName(string name)
+{
+	m_username = name;
 }
 
 std::string Clients::getMessage() { return m_message; }
