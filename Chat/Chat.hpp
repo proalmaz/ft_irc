@@ -12,6 +12,7 @@ private:
 		std::string			s_commandName;
 		void 				(Chat::*f)(Clients &src, std::vector<string> &cmd);
 	};
+	int 					m_port;
 	int						m_fds;
 	vector<Clients *>		m_clients;
 	vector<Channel *>		m_channels;
@@ -20,8 +21,9 @@ private:
 	int 					m_max_fd;
 	s_command				m_commands[12];
 
-public:
 	Chat();
+public:
+	Chat(int port, string password);
 	Chat(Chat const &copy);
 	~Chat();
 

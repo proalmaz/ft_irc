@@ -1,6 +1,9 @@
 #include "Chat.hpp"
 
-Chat::Chat() : m_fds(-1), m_password("123")
+Chat::Chat() {}
+
+Chat::Chat(int port, string password) : m_fds(-1), m_port(port),
+m_password(password)
 {
 	m_commands[0].s_commandName = "HELP";
 	m_commands[0].f = &Chat::printHelp;
@@ -36,6 +39,7 @@ Chat	&Chat::operator=(const Chat &copy)
 {
 	if (this == &copy)
 		return *this;
+	m_port = copy.m_port;
 	m_rfd = copy.m_rfd;
 	m_max_fd = copy.m_max_fd;
 	m_fds = copy.m_fds;
@@ -67,11 +71,11 @@ void Chat::socketPreparation()
 	// мы говорим, что будем использовать ТСP протокол
 	addr.sin_family = AF_INET;
 	// порт любой, кроме (1 - 1023)
-	addr.sin_port = htons(8081);
+	addr.sin_port = htons(m_port);
 	// 127.0.0.1
-//	addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	if (!inet_aton("127.0.0.1", &(addr.sin_addr)))
-		throw string("not valid ip address\n");
+	addr.sin_addr.s_addr = htonl(INADDR_ANY);
+//	if (!inet_aton("127.0.0.1", &(addr.sin_addr)))
+//		throw string("not valid ip address\n");
 	// связываем фд сокета со структурой адреса
 	if (bind(m_fds, (const struct sockaddr *)&addr, sizeof(addr)) == -1) //
 		throw string("Error: bind\n");

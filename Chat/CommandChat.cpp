@@ -124,17 +124,20 @@ void Chat::kick(Clients &src, vector<string> &cmd)
 
 void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 {
-	std::string output = "HELP 	- show a list of available commands.\n"
+	std::string output = PURPLE
+						 "HELP 	- show a list of available commands.\n"
 						 "KICK 	- kick the client off the channel.\n"
 						 "JOIN 	- create or enter an existing channel.\n"
 						 "NICK 	- change nickname.\n"
 						 "PRIVMSG	- send private message somebody.\n"
+						 "NOTICE	- send private message somebody.\n"
 						 "QUIT	- leave a chat.\n"
 						 "LEAVE	- leave a channel.\n"
 						 "LIST	- channel list.\n"
 						 "WHO	- list of members in this channel.\n"
 						 "WHOIS	- information about the member.\n"
-						 "WHOIN	- information about the members in the channel.\n";
+						 "WHOIN	- information about the members in the channel.\n"
+						 NO_COLOR;
 	sendMessageToClient(src, output);
 }
 
@@ -161,8 +164,6 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 	{
 		if (m_clients[i]->getFd() == src.getFd())
 		{
-			close(src.getFd());
-			m_clients.erase(m_clients.begin() + i);
 			vector<Clients *> tmp = m_clients[i]->getChannel()->getUsers();
 			for (int j = 0; j < tmp.size(); ++j)
 			{
@@ -171,6 +172,11 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 				sendMessageToClient(*tmp[j], B_CYAN + src.getNickname() +
 				" has left the channel.\n" NO_COLOR);
 			}
+			close(m_clients[i]->getFd());
+			if (m_clients[i]->getChannel() != nullptr)
+				m_clients[i]->getChannel()->removeUser(*m_clients[i]);
+			free(m_clients[i]);
+			m_clients.erase(m_clients.begin() + i);
 		}
 	}
 }

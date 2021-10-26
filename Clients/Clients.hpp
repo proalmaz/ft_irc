@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <strings.h>
 #include <arpa/inet.h>
+#include <cstdlib>
 
 #define CLIENT_OFF 1
 #define CLIENT_ALL_RIGHT 0
