@@ -38,6 +38,7 @@ public:
 	int 	getMessage(Clients &src);
 	bool 	checkCommand(Clients &src);
 
+	void 	who(Clients &src, vector<string> &cmd);
 	void 	list(Clients &src, vector<string> &cmd);
 	void 	leave(Clients &src, vector<string> &cmd);
 	void	kick(Clients &src, vector<string> &cmd);

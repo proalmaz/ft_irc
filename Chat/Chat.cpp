@@ -19,6 +19,7 @@ Chat::Chat() : m_fds(-1), m_password("123")
 	m_commands[7].s_commandName = "LIST";
 	m_commands[7].f = &Chat::list;
 	m_commands[8].s_commandName = "WHO";
+	m_commands[8].f = &Chat::who;
 }
 
 Chat::Chat(const Chat &copy) { *this = copy; }

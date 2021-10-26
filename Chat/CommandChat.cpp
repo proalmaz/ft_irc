@@ -146,6 +146,28 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 	}
 }
 
+void Chat::who(Clients &src, vector<string> &cmd)
+{
+	if (cmd.size() != 1 || cmd[0].front() == '\n')
+		return sendMessageToClient(src, B_RED "Correct format:\nWHO\n"
+		NO_COLOR);
+	if (src.getChannel() == nullptr)
+		return sendMessageToClient(src, B_RED "You are not a member of any "
+											  "channel.\n" NO_COLOR);
+	vector<Clients *> tmp = src.getChannel()->getUsers();
+	for (int i = 0; i < tmp.size(); ++i)
+	{
+		if (tmp[i] == src.getChannel()->getAdmin())
+		{
+			sendMessageToClient(src, B_YELLOW + std::to_string(i + 1)
+			+ ". "+ tmp[i]->getNickname() + " (admin)" + NO_COLOR "\n");
+			continue;
+		}
+		sendMessageToClient(src, B_YELLOW + std::to_string(i + 1)
+		+ ". "+ tmp[i]->getNickname() + NO_COLOR "\n");
+	}
+}
+
 void Chat::list(Clients &src, vector<string> &cmd)
 {
 	if (cmd.size() != 1 || cmd[0].front() == '\n')
