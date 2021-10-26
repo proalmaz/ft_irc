@@ -65,8 +65,11 @@ void 	Chat::leave(Clients &src, vector<string> &cmd)
 
 void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
 {
-	if (cmd.size() != 3 || cmd[2].front() == '\n')
+	if ((cmd.size() != 3 || cmd[2].front() == '\n') && cmd[0] == "PRIVMSG")
 		sendMessageToClient(src, B_RED "Correct format:\nPRIVMSG <nickname> <message>\n" NO_COLOR);
+	else if ((cmd.size() != 3 || cmd[2].front() == '\n') && cmd[0] == "NOTICE")
+		sendMessageToClient(src, B_RED "Correct format:\nNOTICE <nickname> "
+									   "<message>\n" NO_COLOR);
 	else
 	{
 		if (cmd[1] == src.getNickname())

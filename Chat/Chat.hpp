@@ -18,7 +18,7 @@ private:
 	string					m_password;
 	fd_set					m_rfd;
 	int 					m_max_fd;
-	s_command				m_commands[11];
+	s_command				m_commands[12];
 
 public:
 	Chat();
