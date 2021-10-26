@@ -125,19 +125,25 @@ void Chat::kick(Clients &src, vector<string> &cmd)
 void Chat::printHelp(Clients &src, std::vector<string> &cmd)
 {
 	std::string output = PURPLE
-						 "HELP 	- show a list of available commands.\n"
-						 "KICK 	- kick the client off the channel.\n"
-						 "JOIN 	- create or enter an existing channel.\n"
-						 "NICK 	- change nickname.\n"
-						 "PRIVMSG	- send private message somebody.\n"
-						 "NOTICE	- send private message somebody.\n"
-						 "QUIT	- leave a chat.\n"
-						 "LEAVE	- leave a channel.\n"
-						 "LIST	- channel list.\n"
-						 "WHO	- list of members in this channel.\n"
-						 "WHOIS	- information about the member.\n"
-						 "WHOIN	- information about the members in the channel.\n"
-						 NO_COLOR;
+			"/---------------------------------------------------------------\\\n"
+			"|   HELP 	- show a list of available commands"
+			".\t\t|\n"
+			"|   KICK 	- kick the client off the channel.\t\t|\n"
+			"|   JOIN 	- create or enter an existing channel"
+			".\t\t|\n"
+			"|   NICK 	- change nickname.\t\t\t\t|\n"
+			"|   PRIVMSG	- send private message somebody"
+			".\t\t|\n"
+			"|   NOTICE	- send private message somebody.\t\t|\n"
+			"|   QUIT	- leave a chat.\t\t\t\t\t|\n"
+			"|   LEAVE	- leave a channel.\t\t\t\t|\n"
+			"|   LIST	- channel list.\t\t\t\t\t|\n"
+			"|   WHO	\t- list of members in this channel.\t\t|\n"
+			"|   WHOIS	- information about the member.\t\t\t|\n"
+			"|   WHOIN	- information about the members in "
+			"the channel.\t|\n"
+			"\\---------------------------------------------------------------/\n"
+			NO_COLOR;
 	sendMessageToClient(src, output);
 }
 
@@ -164,13 +170,16 @@ void Chat::quitClient(Clients &src, vector<string> &cmd)
 	{
 		if (m_clients[i]->getFd() == src.getFd())
 		{
-			vector<Clients *> tmp = m_clients[i]->getChannel()->getUsers();
-			for (int j = 0; j < tmp.size(); ++j)
+			if (m_clients[i]->getChannel() != nullptr)
 			{
-				if (tmp[j] == &src)
-					continue;
-				sendMessageToClient(*tmp[j], B_CYAN + src.getNickname() +
-				" has left the channel.\n" NO_COLOR);
+				vector<Clients *> tmp = m_clients[i]->getChannel()->getUsers();
+				for (int j = 0; j < tmp.size(); ++j)
+				{
+					if (tmp[j] == &src)
+						continue;
+					sendMessageToClient(*tmp[j], B_CYAN + src.getNickname() +
+					" has left the channel.\n" NO_COLOR);
+				}
 			}
 			close(m_clients[i]->getFd());
 			if (m_clients[i]->getChannel() != nullptr)

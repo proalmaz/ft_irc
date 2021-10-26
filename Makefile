@@ -27,6 +27,6 @@ fclean: clean
 re:	fclean all
 
 run: fclean all
-	make clean && clear && ./$(NAME)
+	make clean && clear && ./$(NAME) 8080 123
 
 .PHONY: all clean fclean re
