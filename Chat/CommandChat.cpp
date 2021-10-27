@@ -86,40 +86,40 @@ void    Chat::sendPrivateMessage(Clients &src, vector<string> &cmd)
 
 void Chat::kick(Clients &src, vector<string> &cmd)
 {
-	if (cmd.size() != 2 || cmd[1].front() == '\n')
-		sendMessageToClient(src, B_RED "Correct format:\nKICK <nickname> \n" NO_COLOR);
-	else
-	{
-		vector<Clients *> tmp = src.getChannel()->getUsers();
-		if (&src == src.getChannel()->getAdmin())
-		{
-			string name = ft_strtrim(cmd[1], "\n");
-			for (int i = 0; i < tmp.size(); ++i)
-			{
-				if (tmp[i]->getNickname() == name)
-				{
-					if (tmp[i] == src.getChannel()->getAdmin())
-					{
-						sendMessageToClient(src, B_RED "You can't kick "
-						"yourself.\n" NO_COLOR);
-						return;
-					}
-					sendMessageToClient(*tmp[i], B_RED "You was kicked by " + src
-					.getNickname() + "\n" NO_COLOR);
-					tmp[i]->setChannel(nullptr);
-					src.getChannel()->removeUser(*tmp[i]);
-					return;
-				}
-			}
-			sendMessageToClient(src, B_RED "Client " + name + " not found in "
-			"this channel.\n" NO_COLOR);
-		}
-		else
-		{
-			sendMessageToClient(src, B_RED "Only admin can kick users.\n"
-			NO_COLOR);
-		}
-	}
+    if (cmd.size() != 2 || cmd[1].front() == '\n')
+        return sendMessageToClient(src, B_RED "Correct format:\nKICK <nickname> \n" NO_COLOR);
+    if (src.getChannel() == nullptr)
+        return sendMessageToClient(src, B_RED "Create or join channel.\nEnter HELP "
+                                              "for more info.\n" NO_COLOR);
+   	vector<Clients *> tmp = src.getChannel()->getUsers();
+   	if (&src == src.getChannel()->getAdmin())
+   	{
+   		string name = ft_strtrim(cmd[1], "\n");
+   		for (int i = 0; i < tmp.size(); ++i)
+   		{
+   			if (tmp[i]->getNickname() == name)
+   			{
+   				if (tmp[i] == src.getChannel()->getAdmin())
+   				{
+   					sendMessageToClient(src, B_RED "You can't kick "
+   					"yourself.\n" NO_COLOR);
+   					return;
+   				}
+   				sendMessageToClient(*tmp[i], B_RED "You was kicked by " + src
+   				.getNickname() + "\n" NO_COLOR);
+   				tmp[i]->setChannel(nullptr);
+   				src.getChannel()->removeUser(*tmp[i]);
+   				return;
+   			}
+   		}
+   		sendMessageToClient(src, B_RED "Client " + name + " not found in "
+   		"this channel.\n" NO_COLOR);
+   	}
+   	else
+   	{
+   		sendMessageToClient(src, B_RED "Only admin can kick users.\n"
+   		NO_COLOR);
+   	}
 }
 
 void Chat::printHelp(Clients &src, std::vector<string> &cmd)
